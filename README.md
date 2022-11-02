@@ -1,6 +1,6 @@
-[# Proxy Rotation
-
-<div style="text-align:center;"><img src="./img.png"  alt="Proxy Rotation Logo"/></div>
+<p align="center">
+  <img src="./img.png"  alt="Proxy Rotation Logo"/>
+</p>
 
 ### Description
 * Implement Nginx simple load balancing strategies to build a Package Proxy Rotation to use with Guzzle or anymore...
@@ -32,7 +32,7 @@
 Install the package:
 
 ```php
-composer require truongbo/proxy-rotation
+composer require truongbo/proxy-rotation:^1.0
 ```
 Publish package files (config):
 
