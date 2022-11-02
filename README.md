@@ -32,7 +32,7 @@
 Install the package:
 
 ```php
-composer require truongbo/proxy-rotation:^1.0
+composer require truongbo/proxy-rotation:^1.0.1
 ```
 Publish package files (config):
 
