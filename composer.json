@@ -1,0 +1,29 @@
+{
+    "name": "truongbo/proxy-rotation",
+    "description": "Proxy Rotation with Load balancing strategies",
+    "keywords": ["load", "balancing", "random", "round", "robin", "weighted"],
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Truongbo\\ProxyRotation\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Nguyen Quang Truong",
+            "email": "truongnq017@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Truongbo\\ProxyRotation\\ProxyRotationServiceProvider"
+            ]
+        }
+    }
+}
