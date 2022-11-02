@@ -6,7 +6,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Truongbo\\ProxyRotation\\": "src/"
+            "TruongBo\\ProxyRotation\\": "src/"
         }
     },
     "authors": [
@@ -22,7 +22,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Truongbo\\ProxyRotation\\ProxyRotationServiceProvider"
+                "TruongBo\\ProxyRotation\\ProxyRotationServiceProvider"
             ]
         }
     }
