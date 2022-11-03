@@ -35,6 +35,11 @@ Install the package:
 ```php
 composer require truongbo/proxy-rotation
 ```
+Run test:
+```php
+./vendor/bin/phpunit
+```
+
 Publish package files (config):
 
 ```php
