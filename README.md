@@ -33,7 +33,7 @@
 Install the package:
 
 ```php
-composer require truongbo/proxy-rotation:^1.0.1
+composer require truongbo/proxy-rotation
 ```
 Publish package files (config):
 
@@ -134,7 +134,7 @@ Top proxy nodes will be used more and vice versa, for example:
 | proxy-node4 | 10          |
 +-------------+-------------+
 ```
-Sorting nodes can help you use the [Frequency] strategy better.
+Sorting nodes can help you use the [Frequency](#frequency) strategy better.
 Use asc for reverse sort.
 -------------------
 
@@ -273,7 +273,7 @@ Output:
 | etc...      |
 +-------------+
 ```
-* You can interfere with proxy usage for a certain period of time if the proxy is restricted from use.Using [Max Use]
+* You can interfere with proxy usage for a certain period of time if the proxy is restricted from use.Using [Max Use](#max-use)
 --------------------
 ## Weighted Round Robin
 
