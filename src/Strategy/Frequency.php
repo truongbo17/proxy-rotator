@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copy of denisyukphp
+ * Author truongbo & denisyukphp
  * */
 
 namespace TruongBo\ProxyRotation\Strategy;
@@ -37,13 +37,18 @@ final class Frequency implements StrategyInterface
             throw new EmptyNodeException();
         }
 
+        re_get_node:
         $total = $proxy_cluster->count();
         $low = (int)ceil($this->depth * $total);
         $high = $low + ((1 < $total) ? 1 : 0);
 
         $index = $this->isChance($this->frequency) ? mt_rand(1, $low) : mt_rand($high, $total);
+        $proxy_node = $proxy_cluster->getNode(index: $index - 1);
+        if ($proxy_node->hasCheckMaxUse(class_name: self::class) && $proxy_node->checkCounter(class_name: self::class)) {
+            goto re_get_node;
+        }
 
-        return $proxy_cluster->getNode($index - 1);
+        return $proxy_node;
     }
 
     /**
