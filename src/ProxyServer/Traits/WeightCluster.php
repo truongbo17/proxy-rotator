@@ -54,6 +54,15 @@ trait WeightCluster
         return $this->proxy_node_has_weight->isEmpty();
     }
 
+    /** Check empty Node No Weight
+     *
+     * @return bool
+     * */
+    public function isEmptyNodeNoWeight(): bool
+    {
+        return $this->proxy_node_no_weight->isEmpty();
+    }
+
     /**
      * Return count node has weight by index collection
      *

@@ -9,6 +9,16 @@
             "TruongBo\\ProxyRotation\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "TruongBo\\ProxyRotation\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php ./vendor/bin/testbench package:discover --ansi"
+        ]
+    },
     "authors": [
         {
             "name": "Nguyen Quang Truong",
@@ -25,5 +35,8 @@
                 "TruongBo\\ProxyRotation\\ProxyRotationServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^7.11"
     }
 }

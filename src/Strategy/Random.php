@@ -91,7 +91,7 @@ class Random implements StrategyInterface
      */
     public function noWeightRandom(ProxyCluster $proxy_cluster): ?ProxyNode
     {
-        if ($proxy_cluster->isEmptyNodeHasWeight()) {
+        if ($proxy_cluster->isEmptyNodeNoWeight()) {
             throw new EmptyNodeException(message: "No node no weight . Please set the weight of proxy node to 0");
         }
 
