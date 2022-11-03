@@ -134,8 +134,10 @@ Top proxy nodes will be used more and vice versa, for example:
 | proxy-node4 | 10          |
 +-------------+-------------+
 ```
+
 Sorting nodes can help you use the [Frequency](#frequency) strategy better.
 Use asc for reverse sort.
+
 -------------------
 
 ## Max Use
