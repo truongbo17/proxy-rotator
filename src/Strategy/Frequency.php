@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Author truongbo & denisyukphp
+ * Author truongbo & denisyukphp (only this class Frequency Strategy)
  * */
 
 namespace TruongBo\ProxyRotation\Strategy;
