@@ -34,7 +34,7 @@ final class ProxyNode
         public readonly int    $fail_time_out_second = 90
     )
     {
-        if ($this->max_use < 2 && $this->max_wait_use) {
+        if ($this->max_use < 2 && $this->max_wait_use < 2) {
             throw new MaxUseNodeException();
         }
     }
