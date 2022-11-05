@@ -2,7 +2,7 @@
 
 namespace TruongBo\ProxyRotation\Strategy;
 
-use TruongBo\ProxyRotation\Exception\MaxUseNodeException;
+use TruongBo\ProxyRotation\Exception\EmptyNodeException;
 use TruongBo\ProxyRotation\ProxyServer\ProxyCluster;
 use TruongBo\ProxyRotation\ProxyServer\ProxyNode;
 
@@ -25,12 +25,12 @@ class RoundRobin implements StrategyInterface
      * @param ProxyCluster $proxy_cluster
      * @param callable|null $condition_switch
      * @return ProxyNode|null
-     * @throws MaxUseNodeException
+     * @throws EmptyNodeException
      */
     public function getNode(ProxyCluster $proxy_cluster, ?callable $condition_switch = null): null|ProxyNode
     {
         if ($proxy_cluster->isEmpty()) {
-            throw new MaxUseNodeException();
+            throw new EmptyNodeException();
         }
 
         re_get_node:
