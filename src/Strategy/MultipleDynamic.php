@@ -40,7 +40,6 @@ final class MultipleDynamic implements StrategyInterface
     public function getNode(ProxyCluster $proxy_cluster, ?callable $condition_switch = null): null|ProxyNode
     {
         $current_proxy_node = $this->strategies[$this->array_key_strategy];
-        dump($this->strategies[$this->array_key_strategy]::class);
         $proxy_node = $current_proxy_node->getNode($proxy_cluster);
         $check = call_user_func($condition_switch, $proxy_node);
 
