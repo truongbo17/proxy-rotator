@@ -126,7 +126,7 @@ $proxy_cluster = new ProxyCluster(
             new ProxyNode(name: 'proxy-node4',weight: 10),
         ]);
         
-$cluster->sort("desc");
+$proxy_cluster->sort("desc");
 ```
 Top proxy nodes will be used more and vice versa, for example:
 ```text
