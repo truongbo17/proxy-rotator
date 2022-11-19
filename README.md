@@ -169,7 +169,7 @@ Everything else runs automatically
 ```
 Config:
 ```php
-use TruongBo\ProxyRotation;
+use TruongBo\ProxyRotation\Rotation;
 use TruongBo\ProxyRotation\Strategy\Random;
 use TruongBo\ProxyRotation\ProxyServer\ProxyCluster;
 use TruongBo\ProxyRotation\ProxyServer\ProxyNode;
@@ -250,7 +250,7 @@ The probability of choosing nodes for Frequency can be visualized as follows::
 
 The proxies will be rotated in turn ($counter : start counting from somewhere)
 ```php
-use TruongBo\ProxyRotation;
+use TruongBo\ProxyRotation\Rotation;
 use TruongBo\ProxyRotation\Strategy\RoundRobin;
 use TruongBo\ProxyRotation\ProxyServer\ProxyCluster;
 use TruongBo\ProxyRotation\ProxyServer\ProxyNode;
@@ -287,7 +287,7 @@ Output:
 The number of times this proxy node is called is the weight parameter passed in the initialization of the ProxyNode
 ($counter : start counting from somewhere)
 ```php
-use TruongBo\ProxyRotation;
+use TruongBo\ProxyRotation\Rotation;
 use TruongBo\ProxyRotation\Strategy\WeightedRoundRobin;
 use TruongBo\ProxyRotation\ProxyServer\ProxyCluster;
 use TruongBo\ProxyRotation\ProxyServer\ProxyNode;
@@ -323,7 +323,7 @@ Output:
 Dynamically change strategies according to the passed callable condition (Absolutely do not use if you do not know about it)
 
 ```php
-use TruongBo\ProxyRotation;
+use TruongBo\ProxyRotation\Rotation;
 use TruongBo\ProxyRotation\Strategy\WeightedRoundRobin;
 use TruongBo\ProxyRotation\ProxyServer\ProxyCluster;
 use TruongBo\ProxyRotation\ProxyServer\ProxyNode;
@@ -345,7 +345,7 @@ $proxy_cluster = new ProxyCluster(
 
         while (true) {
             $node = $rotation->pick($cluster, function (ProxyNode $proxy_node){
-                //condition here
+                //condition switch between strategies in here.
             });
 
             echo $node?->name;
