@@ -3,7 +3,7 @@
 namespace TruongBo\ProxyRotation\Strategy;
 
 use TruongBo\ProxyRotation\Exception\EmptyNodeException;
-use TruongBo\ProxyRotation\ProxyServer\ProxyCluster;
+use TruongBo\ProxyRotation\ProxyServer\ProxyClusterInterface;
 use TruongBo\ProxyRotation\ProxyServer\ProxyNode;
 
 final class WeightedRoundRobin implements StrategyInterface
@@ -28,12 +28,12 @@ final class WeightedRoundRobin implements StrategyInterface
     /**
      * Get node by strategy Round Robin
      *
-     * @param ProxyCluster $proxy_cluster
+     * @param ProxyClusterInterface $proxy_cluster
      * @param callable|null $condition_switch
      * @return ProxyNode
      * @throws EmptyNodeException
      */
-    public function getNode(ProxyCluster $proxy_cluster, ?callable $condition_switch = null): ProxyNode
+    public function getNode(ProxyClusterInterface $proxy_cluster, ?callable $condition_switch = null): ProxyNode
     {
         if ($proxy_cluster->isEmptyNodeHasWeight()) {
             throw new EmptyNodeException(message: "No node has weight . Please increase weight for node");

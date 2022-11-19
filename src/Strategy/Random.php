@@ -3,7 +3,7 @@
 namespace TruongBo\ProxyRotation\Strategy;
 
 use TruongBo\ProxyRotation\Exception\EmptyNodeException;
-use TruongBo\ProxyRotation\ProxyServer\ProxyCluster;
+use TruongBo\ProxyRotation\ProxyServer\ProxyClusterInterface;
 use TruongBo\ProxyRotation\ProxyServer\ProxyNode;
 
 class Random implements StrategyInterface
@@ -23,12 +23,12 @@ class Random implements StrategyInterface
     /**
      * Get node by strategy Random (consists of has weight and no weight)
      *
-     * @param ProxyCluster $proxy_cluster
+     * @param ProxyClusterInterface $proxy_cluster
      * @param callable|null $condition_switch
      * @return ?ProxyNode
      * @throws EmptyNodeException
      */
-    public function getNode(ProxyCluster $proxy_cluster, ?callable $condition_switch = null): ?ProxyNode
+    public function getNode(ProxyClusterInterface $proxy_cluster, ?callable $condition_switch = null): ?ProxyNode
     {
         if ($proxy_cluster->isEmpty()) {
             throw new EmptyNodeException();
@@ -44,10 +44,10 @@ class Random implements StrategyInterface
     /**
      * Get node by strategy Random (both)
      *
-     * @param ProxyCluster $proxy_cluster
+     * @param ProxyClusterInterface $proxy_cluster
      * @return ?ProxyNode
      */
-    public function bothRandom(ProxyCluster $proxy_cluster): ?ProxyNode
+    public function bothRandom(ProxyClusterInterface $proxy_cluster): ?ProxyNode
     {
         re_get_node:
         $index = mt_rand(0, $proxy_cluster->count() - 1);
@@ -62,11 +62,11 @@ class Random implements StrategyInterface
     /**
      * Get node by strategy Random (has weight)
      *
-     * @param ProxyCluster $proxy_cluster
+     * @param ProxyClusterInterface $proxy_cluster
      * @return ?ProxyNode
      * @throws EmptyNodeException
      */
-    public function hasWeightRandom(ProxyCluster $proxy_cluster): ?ProxyNode
+    public function hasWeightRandom(ProxyClusterInterface $proxy_cluster): ?ProxyNode
     {
         if ($proxy_cluster->isEmptyNodeHasWeight()) {
             throw new EmptyNodeException(message: "No node has weight . Please increase weight for node");
@@ -85,11 +85,11 @@ class Random implements StrategyInterface
     /**
      * Get node by strategy Random (no weight)
      *
-     * @param ProxyCluster $proxy_cluster
+     * @param ProxyClusterInterface $proxy_cluster
      * @return ?ProxyNode
      * @throws EmptyNodeException
      */
-    public function noWeightRandom(ProxyCluster $proxy_cluster): ?ProxyNode
+    public function noWeightRandom(ProxyClusterInterface $proxy_cluster): ?ProxyNode
     {
         if ($proxy_cluster->isEmptyNodeNoWeight()) {
             throw new EmptyNodeException(message: "No node no weight . Please set the weight of proxy node to 0");

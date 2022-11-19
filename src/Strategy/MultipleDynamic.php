@@ -4,9 +4,8 @@ namespace TruongBo\ProxyRotation\Strategy;
 
 use TruongBo\ProxyRotation\Exception\EmptyStrategyException;
 use TruongBo\ProxyRotation\Exception\InvalidCallableException;
-use TruongBo\ProxyRotation\ProxyServer\ProxyCluster;
+use TruongBo\ProxyRotation\ProxyServer\ProxyClusterInterface;
 use TruongBo\ProxyRotation\ProxyServer\ProxyNode;
-use Illuminate\Support\Collection;
 
 final class MultipleDynamic implements StrategyInterface
 {
@@ -32,12 +31,12 @@ final class MultipleDynamic implements StrategyInterface
     /**
      * Get node from strategy
      *
-     * @param ProxyCluster $proxy_cluster
+     * @param ProxyClusterInterface $proxy_cluster
      * @param callable|null $condition_switch
      * @return ProxyNode|null
      * @throws InvalidCallableException
      */
-    public function getNode(ProxyCluster $proxy_cluster, ?callable $condition_switch = null): null|ProxyNode
+    public function getNode(ProxyClusterInterface $proxy_cluster, ?callable $condition_switch = null): null|ProxyNode
     {
         $current_proxy_node = $this->strategies[$this->array_key_strategy];
         $proxy_node = $current_proxy_node->getNode($proxy_cluster);

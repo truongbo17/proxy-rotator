@@ -23,7 +23,7 @@ final class ProxyMiddleware
     public function __invoke(callable $handler): Closure
     {
         return function (RequestInterface $request, array $options) use ($handler) {
-            $node = $this->rotation->pick($this->proxy_cluster);
+            $node = $this->rotation->pick(proxy_cluster: $this->proxy_cluster);
             $options['proxy'] = $node->name;
             return $handler($request, $options);
         };

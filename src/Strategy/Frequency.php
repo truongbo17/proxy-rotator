@@ -7,7 +7,7 @@
 namespace TruongBo\ProxyRotation\Strategy;
 
 use TruongBo\ProxyRotation\Exception\EmptyNodeException;
-use TruongBo\ProxyRotation\ProxyServer\ProxyCluster;
+use TruongBo\ProxyRotation\ProxyServer\ProxyClusterInterface;
 use TruongBo\ProxyRotation\ProxyServer\ProxyNode;
 
 final class Frequency implements StrategyInterface
@@ -26,12 +26,12 @@ final class Frequency implements StrategyInterface
     }
 
     /**
-     * @param ProxyCluster $proxy_cluster
+     * @param ProxyClusterInterface $proxy_cluster
      * @param callable|null $condition_switch
      * @return ProxyNode|null
      * @throws EmptyNodeException
      */
-    public function getNode(ProxyCluster $proxy_cluster, ?callable $condition_switch = null): null|ProxyNode
+    public function getNode(ProxyClusterInterface $proxy_cluster, ?callable $condition_switch = null): null|ProxyNode
     {
         if ($proxy_cluster->isEmpty()) {
             throw new EmptyNodeException();

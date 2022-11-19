@@ -51,7 +51,7 @@ php artisan vendor:publish --provider="TruongBo\ProxyRotation\ProxyRotationServi
 
 You need to choose a rotation strategy and configure it with Rotation:
 ```php
-use TruongBo\ProxyRotation;
+use TruongBo\ProxyRotation\Rotation;
 use TruongBo\ProxyRotation\Strategy\RoundRobin;
 
 $rotation = new Rotation(new RoundRobin(counter: 0));
