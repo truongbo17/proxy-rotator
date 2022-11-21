@@ -96,14 +96,9 @@ final class Client
                 ?ResponseInterface $response = null,
                 ?\RuntimeException $e = null
             ) use ($current_host) {
-                dump("counter : " . $retries);
-                dump($current_host->endpoint);
                 if ($retries >= $current_host->retry_fail_to_next) {
-                    $this->setCurrentHost();
-                    $this->send();
-//                    return false;
+                    return false;
                 }
-                dump($current_host->endpoint);
 
                 if ($response && in_array($response->getStatusCode(), (array)$current_host->status_code_to_next)) {
                     return true;
