@@ -60,6 +60,12 @@ final class Client
         $this->hosts = $hosts;
         $this->setCurrentHost();
 
+        //stop when run all config
+        if(isset($config['stop_when_run_all']) && is_bool($config['stop_when_run_all'])){
+            $this->stop_when_run_all = $this->config['stop_when_run_all'];
+        }
+
+        //handler stack config
         if (!isset($this->config['handler'])) {
             $this->config['handler'] = HandlerStack::create();
         }

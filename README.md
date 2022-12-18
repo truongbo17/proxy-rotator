@@ -20,10 +20,14 @@
 - [Weighted Round Robin](#weighted-round-robin)
 - [Multiple Dynamic](#multiple-dynamic)
 
+### Multiple Endpoint
+Automatically retry connect and switch between endpoint 
+- [Introduction](MultipleEndpoint.md)
+
 ## Next feature
-- Use backup hosts (if the main host is not accessible, Guzzle will automatically connect to the backup hosts to get data...)
+- ~~Use backup hosts (if the main host is not accessible, Guzzle will automatically connect to the backup hosts to get data...)~~ ✔️
 - Configure strategies to run separately with hosts, smarter
-- Automatically retry connecting hosts when it fails to connect (configure number of retries, response code types)
+- ~~Automatically retry connecting hosts when it fails to connect (configure number of retries, response code types)~~ ✔️
 - Load balancing, apply separate strategies to each Cluster
 - Anymore...
 
