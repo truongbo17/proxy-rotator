@@ -58,6 +58,21 @@ $response = $client->send();
 * Client constructor
   * config : config client (stop_when_run_all and HandlerStack)
   * hosts : TruongBo\ProxyRotation\Servers\Host
+
+* And if you want to use with ProxyRotator
+  * Example create handler stack in [ProxyRotation](README.md)
+  ```php
+    $stack = HandlerStack::create();
+    $stack->push(new ProxyMiddleware(rotation: $rotation,proxy_cluster: $proxy_cluster));
+  
+    //add to config Client construct
+    $client = new Client(
+        config: [
+            'handler' => $stack
+        ],
+        hosts: $first_host, $second_host, $third_host
+    );
+  ```
 ----- 
 
 #### Debug running :
