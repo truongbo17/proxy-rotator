@@ -121,7 +121,9 @@ final class Client
                 ?ResponseInterface $response = null,
                 ?RuntimeException  $e = null
             ) {
-                if ($retries >= $this->current_host->retry_fail_to_next) {
+                $this->debug();
+
+                if ($retries + 1 >= $this->current_host->retry_fail_to_next) {
                     return false;
                 }
 
@@ -170,7 +172,7 @@ final class Client
     private function debug(): void
     {
         if ($this->debug) {
-            dump("Guzzle is sending request to : {$this->getCurrentHost()}");
+            dump("Guzzle is sending request to : {$this->current_host->endpoint}");
         }
     }
 
