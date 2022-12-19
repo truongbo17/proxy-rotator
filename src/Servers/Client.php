@@ -73,7 +73,7 @@ final class Client
 
         //debug
         if (isset($config['debug']) && is_bool($config['debug'])) {
-            $this->stop_when_run_all = $this->config['debug'];
+            $this->debug = $this->config['debug'];
         }
 
         //handler stack config
@@ -81,7 +81,7 @@ final class Client
             $this->config['handler'] = HandlerStack::create();
         }
         if ($this->config['handler'] instanceof HandlerStack) {
-            $this->config['handler']->push($this->getRetryMiddleware(current_host: $this->current_host));
+            $this->config['handler']->push($this->getRetryMiddleware());
         }
     }
 
@@ -110,10 +110,9 @@ final class Client
     /**
      * Handle retry request
      *
-     * @param HostInterface $current_host
      * @return callable
      */
-    private function getRetryMiddleware(HostInterface $current_host): callable
+    private function getRetryMiddleware(): callable
     {
         return Middleware::retry(
             function (
@@ -121,16 +120,16 @@ final class Client
                 RequestInterface   $request,
                 ?ResponseInterface $response = null,
                 ?RuntimeException  $e = null
-            ) use ($current_host) {
-                if ($retries >= $current_host->retry_fail_to_next) {
+            ) {
+                if ($retries >= $this->current_host->retry_fail_to_next) {
                     return false;
                 }
 
-                if ($response && in_array($response->getStatusCode(), (array)$current_host->status_code_to_next)) {
+                if ($response && in_array($response->getStatusCode(), (array)$this->current_host->status_code_to_next)) {
                     return true;
                 }
 
-                if ($e instanceof ConnectException && $current_host->check_exception) {
+                if ($e instanceof ConnectException && $this->current_host->check_exception) {
                     return true;
                 }
 
@@ -147,8 +146,6 @@ final class Client
      */
     public function send(): ResponseInterface
     {
-        $this->debug();
-
         re_send_request:
         try {
             $client = new GuzzleClient([
@@ -173,7 +170,7 @@ final class Client
     private function debug(): void
     {
         if ($this->debug) {
-            echo "Guzzle is sending request to : {$this->getCurrentHost()}";
+            dump("Guzzle is sending request to : {$this->getCurrentHost()}");
         }
     }
 
