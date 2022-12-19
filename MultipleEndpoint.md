@@ -36,14 +36,14 @@ $third_host = new Host(
 
 //Send request
 $client = new Client(
-    config: [
+    [
         'stop_when_run_all' => true
     ],
-    hosts: $first_host, $second_host, $third_host
+    $first_host, $second_host, $third_host
 );
 
 /**
- * @return Psr\Http\Message\ResponseInterface;
+ * @return \Psr\Http\Message\ResponseInterface;
  * */
 $response = $client->send();
 ```
@@ -56,7 +56,7 @@ $response = $client->send();
   * options : option to Guzzle request
 
 * Client constructor
-  * config : config client (stop_when_run_all and HandlerStack)
+  * config : config client (stop_when_run_all and HandlerStack and debug request sending to...)
   * hosts : TruongBo\ProxyRotation\Servers\Host
 
 * And if you want to use with ProxyRotator

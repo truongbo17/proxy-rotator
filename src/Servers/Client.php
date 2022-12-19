@@ -36,8 +36,14 @@ final class Client
     private int $current_index = 0;
 
     /**
-     * @var bool $stop_when_run_all
+     * Debug see which host guzzle is sending request to
+     * @var bool $debug
+     * */
+    private bool $debug = false;
+
+    /**
      * If the request has been sent to all servers and failed, you can repeat it by setting $stop_when_run_all to false
+     * @var bool $stop_when_run_all
      * */
     private bool $stop_when_run_all = true;
 
@@ -61,8 +67,13 @@ final class Client
         $this->setCurrentHost();
 
         //stop when run all config
-        if(isset($config['stop_when_run_all']) && is_bool($config['stop_when_run_all'])){
+        if (isset($config['stop_when_run_all']) && is_bool($config['stop_when_run_all'])) {
             $this->stop_when_run_all = $this->config['stop_when_run_all'];
+        }
+
+        //debug
+        if (isset($config['debug']) && is_bool($config['debug'])) {
+            $this->stop_when_run_all = $this->config['debug'];
         }
 
         //handler stack config
@@ -136,8 +147,9 @@ final class Client
      */
     public function send(): ResponseInterface
     {
+        $this->debug();
+
         re_send_request:
-        dump($this->current_host->endpoint);
         try {
             $client = new GuzzleClient([
                 'timeout' => $this->current_host->time_out,
@@ -155,6 +167,13 @@ final class Client
                 throw new Exception($exception);
             }
             goto re_send_request;
+        }
+    }
+
+    private function debug(): void
+    {
+        if ($this->debug) {
+            echo "Guzzle is sending request to : {$this->getCurrentHost()}";
         }
     }
 
