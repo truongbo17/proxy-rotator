@@ -121,7 +121,7 @@ final class Client
                 ?ResponseInterface $response = null,
                 ?RuntimeException  $e = null
             ) {
-                $this->debug();
+                $this->debug($retries + 1, $response, $e);
 
                 if ($retries + 1 >= $this->current_host->retry_fail_to_next) {
                     return false;
@@ -138,6 +138,21 @@ final class Client
                 return false;
             }
         );
+    }
+
+    /**
+     * Debug
+     * @param int $retry
+     * @param $response
+     * @param $e
+     */
+    private function debug(int $retry, $response, $e): void
+    {
+        if ($this->debug) {
+            dump("Guzzle is sending request to : {$this->current_host->endpoint} with time : $retry");
+            dump("Status Code : " . $response?->getStatusCode());
+            dump("Exception : " . $e?->getMessage());
+        }
     }
 
     /**
@@ -166,13 +181,6 @@ final class Client
                 throw new Exception($exception);
             }
             goto re_send_request;
-        }
-    }
-
-    private function debug(): void
-    {
-        if ($this->debug) {
-            dump("Guzzle is sending request to : {$this->current_host->endpoint}");
         }
     }
 
