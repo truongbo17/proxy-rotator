@@ -48,6 +48,11 @@ final class Client
     private bool $stop_when_run_all = true;
 
     /**
+     * @var int $sleep_time_to_next_host
+     * */
+    private int $sleep_time_to_next_host = 0;
+
+    /**
      * Construct function class Client
      *
      * @param array $config
@@ -74,6 +79,11 @@ final class Client
         //debug
         if (isset($config['debug']) && is_bool($config['debug'])) {
             $this->debug = $this->config['debug'];
+        }
+
+        //set sleep time next to request
+        if (isset($config['sleep_to_next']) && is_numeric($config['sleep_to_next'])) {
+            $this->sleep_time_to_next_host = $this->config['sleep_to_next'];
         }
 
         //handler stack config
@@ -122,6 +132,8 @@ final class Client
                 ?ResponseInterface $response = null,
                 ?RuntimeException  $e = null
             ) {
+                $this->current_host->sleep();
+
                 DebugSendingRequest::debug(
                     is_debug: $this->debug,
                     host: $this->current_host,
@@ -155,7 +167,7 @@ final class Client
      * @param $e
      * @return bool
      */
-    public function baseRetry(int $retries, $response, $e): bool
+    private function baseRetry(int $retries, $response, $e): bool
     {
         if ($retries + 1 >= $this->current_host->retry_fail_to_next) {
             return false;
@@ -197,6 +209,8 @@ final class Client
             if ($this->stop_when_run_all && $this->current_index == 0) {
                 throw new Exception($exception);
             }
+
+            sleep($this->sleep_time_to_next_host);
             goto re_send_request;
         }
     }

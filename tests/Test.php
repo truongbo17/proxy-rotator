@@ -55,19 +55,6 @@ class Test extends TestCase
             method: "GET",
             retry_fail_to_next: 2,
         );
-        $first_host
-            ->addRetryLogic(function (
-                $current_host,
-                $retries,
-                $request,
-                $response,
-                $e
-            ) {
-                if ($retries + 1 >= $current_host->retry_fail_to_next) {
-                    return false;
-                }
-                return true;
-            });
 
         //Assuming this host is not real
         $second_host = new Host(
@@ -88,6 +75,7 @@ class Test extends TestCase
             [
                 'stop_when_run_all' => true,
                 'debug' => true,
+                'sleep_to_next' => 10
             ],
             $first_host, $second_host, $third_host
         );

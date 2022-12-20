@@ -18,6 +18,7 @@ final class Host implements HostInterface
      * @param string $method
      * @param int $retry_fail_to_next
      * @param int $time_out
+     * @param int $sleep_to_next_request
      * @param bool $check_exception
      * @param array $status_code_to_next
      * @param array $options
@@ -28,6 +29,7 @@ final class Host implements HostInterface
         public readonly string $method = 'GET',
         public readonly int    $retry_fail_to_next = 1,
         public readonly int    $time_out = 10,
+        public readonly int    $sleep_to_next_request = 0,
         public readonly bool   $check_exception = true,
         public readonly array  $status_code_to_next = [
             249, 429, 503,
@@ -51,6 +53,10 @@ final class Host implements HostInterface
         if ($this->time_out < 1) {
             throw new HostException("\$time_out must be greater than 1");
         }
+
+        if ($this->sleep_to_next_request < 0) {
+            throw new HostException("\$sleep_to_next_request must be greater than 0");
+        }
     }
 
     /**
@@ -70,6 +76,16 @@ final class Host implements HostInterface
     public function getRetriesLogic(): array
     {
         return $this->retries_logic;
+    }
+
+    /**
+     * Sleep to next request
+     *
+     * @return void
+     * */
+    public function sleep(): void
+    {
+        sleep($this->sleep_to_next_request);
     }
 
     public function __toString(): string
