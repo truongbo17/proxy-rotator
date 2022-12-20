@@ -7,6 +7,13 @@ use TruongBo\ProxyRotation\Exception\HostException;
 final class Host implements HostInterface
 {
     /**
+     * @var array $retries_logic
+     * */
+    private array $retries_logic = [];
+
+    /**
+     * Function constructor
+     *
      * @param string $endpoint
      * @param string $method
      * @param int $retry_fail_to_next
@@ -32,17 +39,37 @@ final class Host implements HostInterface
     }
 
     /**
+     * Validate constructor class
      * @throws HostException
      */
     public function validateConstructor()
     {
-        if($this->retry_fail_to_next < 1){
+        if ($this->retry_fail_to_next < 1) {
             throw new HostException("\$retry_fail_to_next must be greater than 1");
         }
 
-        if($this->time_out < 1){
-            throw new HostException("\$retry_fail_to_next must be greater than 1");
+        if ($this->time_out < 1) {
+            throw new HostException("\$time_out must be greater than 1");
         }
+    }
+
+    /**
+     * Add retry logic
+     * @param callable $retry_logic
+     */
+    public function addRetryLogic(callable $retry_logic): void
+    {
+        $this->retries_logic[] = $retry_logic;
+    }
+
+    /**
+     * Get retry logic
+     *
+     * @return array
+     * */
+    public function getRetriesLogic(): array
+    {
+        return $this->retries_logic;
     }
 
     public function __toString(): string

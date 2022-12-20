@@ -53,8 +53,18 @@ class Test extends TestCase
         $first_host = new Host(
             endpoint: "https://httpbin.test/ip",
             method: "GET",
-            retry_fail_to_next: 1,
+            retry_fail_to_next: 2,
         );
+        $first_host
+            ->addRetryLogic(function (
+                $current_host,
+                $retries,
+                $request,
+                $response,
+                $e
+            ) {
+                return true;
+            });
 
         //Assuming this host is not real
         $second_host = new Host(

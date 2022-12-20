@@ -109,6 +109,7 @@ final class Client
 
     /**
      * Handle retry request
+     * If it's true, try again, if it's wrong, stop and switch to another host endpoint
      *
      * @return callable
      */
@@ -121,38 +122,54 @@ final class Client
                 ?ResponseInterface $response = null,
                 ?RuntimeException  $e = null
             ) {
-                $this->debug($retries + 1, $response, $e);
+                DebugSendingRequest::debug(
+                    is_debug: $this->debug,
+                    host: $this->current_host,
+                    response: $response,
+                    exception: $e,
+                    try_time: $retries + 1
+                );
 
-                if ($retries + 1 >= $this->current_host->retry_fail_to_next) {
-                    return false;
+                foreach ($this->current_host->getRetriesLogic() as $retry_callable) {
+                    $result_call_func = call_user_func(
+                        $retry_callable,
+                        $this->current_host,
+                        $retries,
+                        $request,
+                        $response,
+                        $e
+                    );
+                    if (is_bool($result_call_func)) return $result_call_func;
                 }
 
-                if ($response && in_array($response->getStatusCode(), (array)$this->current_host->status_code_to_next)) {
-                    return true;
-                }
-
-                if ($e instanceof ConnectException && $this->current_host->check_exception) {
-                    return true;
-                }
-
-                return false;
+                return $this->baseRetry($retries, $response, $e);
             }
         );
     }
 
     /**
-     * Debug
-     * @param int $retry
+     * Base retry middleware request
+     *
+     * @param int $retries
      * @param $response
      * @param $e
+     * @return bool
      */
-    private function debug(int $retry, $response, $e): void
+    public function baseRetry(int $retries, $response, $e): bool
     {
-        if ($this->debug) {
-            dump("Guzzle is sending request to : {$this->current_host->endpoint} with time : $retry");
-            dump("Status Code : " . $response?->getStatusCode());
-            dump("Exception : " . $e?->getMessage());
+        if ($retries + 1 >= $this->current_host->retry_fail_to_next) {
+            return false;
         }
+
+        if ($response && in_array($response->getStatusCode(), (array)$this->current_host->status_code_to_next)) {
+            return true;
+        }
+
+        if ($e instanceof ConnectException && $this->current_host->check_exception) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
