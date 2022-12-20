@@ -63,6 +63,9 @@ class Test extends TestCase
                 $response,
                 $e
             ) {
+                if ($retries + 1 >= $current_host->retry_fail_to_next) {
+                    return false;
+                }
                 return true;
             });
 

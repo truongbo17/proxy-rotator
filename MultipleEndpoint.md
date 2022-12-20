@@ -14,30 +14,31 @@ use TruongBo\ProxyRotation\Servers\Client;
 use TruongBo\ProxyRotation\Servers\Host;
 
 //Assuming this host is not real
-$first_host = new Host(
-    endpoint: "https://api.tiktokkkkkk.com/trending/get",
-    method: "GET",
-    retry_fail_to_next: 3,
-);
+ $first_host = new Host(
+            endpoint: "https://httpbin.test/ip",
+            method: "GET",
+            retry_fail_to_next: 2,
+        );
 
-//Assuming this server timed out (249)
+//Assuming this host is not real
 $second_host = new Host(
-    endpoint: "https://api.tiktok.com/trending/get",
-    method: "GET",
-    retry_fail_to_next: 2,
-);
+            endpoint: "https://httpbinnnnnnnnnnnnnnnnnn.org/ip",
+            method: "GET",
+            retry_fail_to_next: 3,
+        );
 
 //Assuming this host is usable and returns data
 $third_host = new Host(
-    endpoint: "https://apih2.tiktok.com/trending/get",
-    method: "GET",
-    retry_fail_to_next: 3,
-);
+            endpoint: "https://httpbin.org/ip",
+            method: "GET",
+            retry_fail_to_next: 3,
+        );
 
 //Send request
 $client = new Client(
     [
-        'stop_when_run_all' => true
+        'stop_when_run_all' => true,
+        'debug' => true,
     ],
     $first_host, $second_host, $third_host
 );
@@ -48,18 +49,37 @@ $client = new Client(
 $response = $client->send();
 ```
 ----- 
-* Host constructor
-  * retry_fail_to_next : number of requests sent to the host (number)
+* **Host constructor**
+  * retry_fail_to_next : number of retry requests sent to the server (number)
   * time_out : time out connect to host (number)
   * check_exception : check with exception (bool)
   * status_code_to_next : status can be accepted for retry (eg 429 when you send multiple requests to the host)
   * options : option to Guzzle request
 
-* Client constructor
+* **Client constructor**
   * config : config client (stop_when_run_all and HandlerStack and debug request sending to...)
   * hosts : TruongBo\ProxyRotation\Servers\Host
 
-* And if you want to use with ProxyRotator
+* **Add custom logic retry**
+  * add callable to function addRetryLogic() with param `$current_host` , `$retries`, `$request`, `$response`, `$e` 
+  ```php
+    $first_host
+            ->addRetryLogic(function (
+                $current_host,
+                $retries,
+                $request,
+                $response,
+                $e
+            ) {
+                //Write condition check retry in here
+                if ($retries + 1 >= $current_host->retry_fail_to_next) {
+                    return false;
+                }
+                return true;
+            });
+    ```
+-----
+* **And if you want to use with ProxyRotator**
   * Example create handler stack in [ProxyRotation](README.md)
   ```php
     $stack = HandlerStack::create();
@@ -76,14 +96,6 @@ $response = $client->send();
 ----- 
 
 #### Debug running :
-```php
-Host name : "https://api.tiktokkkkkk.com/trending/get" => Exception no host (try : 1)
-Host name : "https://api.tiktokkkkkk.com/trending/get" => Exception no host (try : 2)
-Host name : "https://api.tiktokkkkkk.comtrending/get" => Exception no host (try : 3)
-
-Host name : "https://api.tiktok.com/trending/get" => Host time out(249) (try : 1)
-Host name : "https://api.tiktok.com/trending/get" => Host time out(249) (try : 2)
-
-Host name : "https://apih2.tiktok.com/trending/get" => Status Code 200 (try : 1)
-=> Done 
-```
+<p align="center">
+  <img src="./debug-test-multiple.gif"  alt="Debug Test"/>
+</p>
