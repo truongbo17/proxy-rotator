@@ -81,6 +81,7 @@ $response = $client->send();
 -----
 * **And if you want to use with ProxyRotator**
   * Example create handler stack in [ProxyRotation](README.md)
+  * Hosts using strategy rotation are not related to each other
   ```php
     $stack = HandlerStack::create();
     $stack->push(new ProxyMiddleware(rotation: $rotation,proxy_cluster: $proxy_cluster));
