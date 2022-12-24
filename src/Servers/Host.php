@@ -3,6 +3,7 @@
 namespace TruongBo\ProxyRotation\Servers;
 
 use TruongBo\ProxyRotation\Exception\HostException;
+use TruongBo\ProxyRotation\Exception\InvalidCallableException;
 
 final class Host implements HostInterface
 {
@@ -62,9 +63,14 @@ final class Host implements HostInterface
     /**
      * Add retry logic
      * @param callable $retry_logic
+     * @throws InvalidCallableException
      */
     public function addRetryLogic(callable $retry_logic): void
     {
+        if(!is_callable($retry_logic)){
+            throw new InvalidCallableException();
+        }
+
         $this->retries_logic[] = $retry_logic;
     }
 
