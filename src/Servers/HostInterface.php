@@ -20,7 +20,7 @@ interface HostInterface
     /**
      * Get retry logic
      *
-     * @return array
+     * @return callable|null
      * */
-    public function getRetriesLogic(): array;
+    public function getRetryLogic(): callable|null;
 }

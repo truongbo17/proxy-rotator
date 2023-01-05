@@ -142,9 +142,9 @@ final class Client
                     try_time: $retries + 1
                 );
 
-                foreach ($this->current_host->getRetriesLogic() as $retry_callable) {
+                if ($this->current_host->getRetryLogic() && is_callable($this->current_host->getRetryLogic())) {
                     $result_call_func = call_user_func(
-                        $retry_callable,
+                        $this->current_host->getRetryLogic(),
                         $this->current_host,
                         $retries,
                         $request,

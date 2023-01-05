@@ -8,9 +8,9 @@ use TruongBo\ProxyRotation\Exception\InvalidCallableException;
 final class Host implements HostInterface
 {
     /**
-     * @var array $retries_logic
+     * @var callable $retry_logic
      * */
-    private array $retries_logic = [];
+    private $retry_logic = null;
 
     /**
      * Function constructor
@@ -67,21 +67,21 @@ final class Host implements HostInterface
      */
     public function addRetryLogic(callable $retry_logic): void
     {
-        if(!is_callable($retry_logic)){
+        if (!is_callable($retry_logic)) {
             throw new InvalidCallableException();
         }
 
-        $this->retries_logic[] = $retry_logic;
+        $this->retry_logic = $retry_logic;
     }
 
     /**
      * Get retry logic
      *
-     * @return array
+     * @return callable|null
      * */
-    public function getRetriesLogic(): array
+    public function getRetryLogic(): callable|null
     {
-        return $this->retries_logic;
+        return $this->retry_logic;
     }
 
     /**
