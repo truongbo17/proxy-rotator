@@ -8,14 +8,14 @@ use TruongBo\ProxyRotation\ProxyServer\ProxyNode;
 
 final class WeightedRoundRobin implements StrategyInterface
 {
+    private const MAX_RETRIES = 100;
     /**
-     * @var int $counter_node_weight
-     * */
-    private int $counter_node_weight = 0;
-    private ?int $index_node_weight = null;
+     * @var array<int, int> Track weight consumption per index to avoid state issues
+     */
+    private array $weightState = [];
 
     /**
-     * Construct function Class RoundRobin
+     * Construct function Class WeightedRoundRobin
      *
      * @param int $counter
      */
@@ -26,7 +26,7 @@ final class WeightedRoundRobin implements StrategyInterface
     }
 
     /**
-     * Get node by strategy Round Robin
+     * Get node by strategy Weighted Round Robin
      *
      * @param ProxyClusterInterface $proxy_cluster
      * @param callable|null $condition_switch
@@ -36,23 +36,38 @@ final class WeightedRoundRobin implements StrategyInterface
     public function getNode(ProxyClusterInterface $proxy_cluster, ?callable $condition_switch = null): ProxyNode
     {
         if ($proxy_cluster->isEmptyNodeHasWeight()) {
-            throw new EmptyNodeException(message: "No node has weight . Please increase weight for node");
+            throw new EmptyNodeException('No node has weight. Please increase weight for node');
         }
 
-        if ($this->counter_node_weight < 1) {
-            re_get_node:
+        return $this->getNodeWithRetry($proxy_cluster);
+    }
+
+    /**
+     * Attempt to get a non-throttled weighted node with retry logic
+     *
+     * @param ProxyClusterInterface $proxy_cluster
+     * @return ProxyNode
+     * @throws EmptyNodeException
+     */
+    private function getNodeWithRetry(ProxyClusterInterface $proxy_cluster): ProxyNode
+    {
+        for ($attempt = 0; $attempt < self::MAX_RETRIES; $attempt++) {
             $index = $this->counter++ % $proxy_cluster->countNodeHasWeight();
             $proxy_node = $proxy_cluster->getNodeHasWeight(index: $index);
 
-            if ($proxy_node->weight > 1) {
-                $this->counter_node_weight = $proxy_node->weight - 1;
-                $this->index_node_weight = $index;
-            } else {
-                return $proxy_node;
+            if (!$proxy_node) {
+                continue;
             }
-        } else {
-            $this->counter_node_weight--;
+
+            // Check if this node is throttled
+            if ($proxy_node->hasCheckMaxUse(class_name: self::class) && $proxy_node->checkCounter(class_name: self::class)) {
+                continue;
+            }
+
+            // Return the node, respecting its weight
+            return $proxy_node;
         }
-        return $proxy_cluster->getNodeHasWeight(index: $this->index_node_weight);
+
+        throw new EmptyNodeException('All proxies are throttled after ' . self::MAX_RETRIES . ' attempts');
     }
 }
