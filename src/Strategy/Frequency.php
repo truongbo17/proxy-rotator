@@ -12,6 +12,8 @@ use TruongBo\ProxyRotation\ProxyServer\ProxyNode;
 
 final class Frequency implements StrategyInterface
 {
+    private const MAX_RETRIES = 100;
+
     /**
      * Function construct class Frequency
      *
@@ -37,18 +39,32 @@ final class Frequency implements StrategyInterface
             throw new EmptyNodeException();
         }
 
-        re_get_node:
-        $total = $proxy_cluster->count();
-        $low = (int)ceil($this->depth * $total);
-        $high = $low + ((1 < $total) ? 1 : 0);
+        return $this->getNodeWithRetry($proxy_cluster);
+    }
 
-        $index = $this->isChance($this->frequency) ? mt_rand(1, $low) : mt_rand($high, $total);
-        $proxy_node = $proxy_cluster->getNode(index: $index - 1);
-        if ($proxy_node->hasCheckMaxUse(class_name: self::class) && $proxy_node->checkCounter(class_name: self::class)) {
-            goto re_get_node;
+    /**
+     * Attempt to get a non-throttled node with retry logic
+     *
+     * @param ProxyClusterInterface $proxy_cluster
+     * @return ProxyNode
+     * @throws EmptyNodeException
+     */
+    private function getNodeWithRetry(ProxyClusterInterface $proxy_cluster): ProxyNode
+    {
+        for ($attempt = 0; $attempt < self::MAX_RETRIES; $attempt++) {
+            $total = $proxy_cluster->count();
+            $low = (int)ceil($this->depth * $total);
+            $high = $low + ((1 < $total) ? 1 : 0);
+
+            $index = $this->isChance($this->frequency) ? mt_rand(1, $low) : mt_rand($high, $total);
+            $proxy_node = $proxy_cluster->getNode(index: $index - 1);
+            
+            if ($proxy_node && !($proxy_node->hasCheckMaxUse(class_name: self::class) && $proxy_node->checkCounter(class_name: self::class))) {
+                return $proxy_node;
+            }
         }
 
-        return $proxy_node;
+        throw new EmptyNodeException('All proxies are throttled after ' . self::MAX_RETRIES . ' attempts');
     }
 
     /**

@@ -69,7 +69,7 @@ final class ProxyCluster implements ProxyClusterInterface
     }
 
     /**
-     * Sort collection proxy node
+     * Sort collection proxy node and re-filter weight subsets
      *
      * @param string $type
      * @return ProxyCluster
@@ -77,17 +77,18 @@ final class ProxyCluster implements ProxyClusterInterface
      */
     public function sort(string $type = "ASC"): self
     {
-        if (strtoupper($type) == "ASC") {
+        $direction = strtoupper($type);
+        
+        if ($direction === "ASC") {
             $this->proxy_node_collection = $this->proxy_node_collection->sortBy('weight');
-            $this->proxy_node_no_weight = $this->proxy_node_collection->sortBy('weight');
-            $this->proxy_node_has_weight = $this->proxy_node_collection->sortBy('weight');
-        } elseif (strtoupper($type) == "DESC") {
+        } elseif ($direction === "DESC") {
             $this->proxy_node_collection = $this->proxy_node_collection->sortByDesc('weight');
-            $this->proxy_node_no_weight = $this->proxy_node_collection->sortByDesc('weight');
-            $this->proxy_node_has_weight = $this->proxy_node_collection->sortByDesc('weight');
         } else {
             throw new InvalidTypeSortException();
         }
+
+        // Re-filter weight subsets to maintain invariants
+        $this->handleWeight();
 
         return $this;
     }

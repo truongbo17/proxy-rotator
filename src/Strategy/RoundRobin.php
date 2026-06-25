@@ -8,6 +8,8 @@ use TruongBo\ProxyRotation\ProxyServer\ProxyNode;
 
 class RoundRobin implements StrategyInterface
 {
+    private const MAX_RETRIES = 100;
+
     /**
      * Construct function Class RoundRobin
      *
@@ -33,13 +35,27 @@ class RoundRobin implements StrategyInterface
             throw new EmptyNodeException();
         }
 
-        re_get_node:
-        $index = $this->counter++ % $proxy_cluster->count();
-        $proxy_node = $proxy_cluster->getNode(index: $index);
-        if ($proxy_node->hasCheckMaxUse(class_name: self::class) && $proxy_node->checkCounter(class_name: self::class)) {
-            goto re_get_node;
+        return $this->getNodeWithRetry($proxy_cluster);
+    }
+
+    /**
+     * Attempt to get a non-throttled node with retry logic
+     *
+     * @param ProxyClusterInterface $proxy_cluster
+     * @return ProxyNode
+     * @throws EmptyNodeException
+     */
+    private function getNodeWithRetry(ProxyClusterInterface $proxy_cluster): ProxyNode
+    {
+        for ($attempt = 0; $attempt < self::MAX_RETRIES; $attempt++) {
+            $index = $this->counter++ % $proxy_cluster->count();
+            $proxy_node = $proxy_cluster->getNode(index: $index);
+            
+            if ($proxy_node && !($proxy_node->hasCheckMaxUse(class_name: self::class) && $proxy_node->checkCounter(class_name: self::class))) {
+                return $proxy_node;
+            }
         }
 
-        return $proxy_node;
+        throw new EmptyNodeException('All proxies are throttled after ' . self::MAX_RETRIES . ' attempts');
     }
 }
